@@ -122,9 +122,9 @@ try:
 except:
     pass
 
-app.config["API_KEY"] = sqlquery("SELECT * FROM settings").fetchall()[0][0]
-app.config["SECRET_KEY"] = os.urandom(30).hex()
 if os.path.isfile("database.db"):
+    app.config["API_KEY"] = sqlquery("SELECT * FROM settings").fetchall()[0][0]
+    app.config["SECRET_KEY"] = os.urandom(30).hex()
     waitress.serve(app, host="0.0.0.0", port=8080)
 else:
     print("\n-> Node not configured")
