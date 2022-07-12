@@ -119,9 +119,10 @@ try:
         if not os.path.isfile("database.db"):
             import models
             sqlquery("INSERT INTO settings (api_key) VALUES (?)", sys.argv[2])
+            os.mkdir("/var/www/deamon/data")
             print("\n-> Node configured succesfully")
             print("-> Enter: service deamon start, to start deamon\n")
-            exit()
+            sys.exit(1)
 except:
     pass
 
@@ -132,4 +133,4 @@ if os.path.isfile("database.db"):
 else:
     print("\n-> Node not configured")
     print("-> Go to you panel and click manage node to view deploy token\n")
-    exit()
+    sys.exit(1)
