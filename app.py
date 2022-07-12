@@ -116,13 +116,12 @@ def echo(ws):
 
 try:
     if sys.argv[1] == "--token":
-        if not os.path.isfile("database.db"):
-            import models
-            sqlquery("INSERT INTO settings (api_key) VALUES (?)", sys.argv[2])
-            os.mkdir("/var/www/deamon/data")
-            print("\n-> Node configured succesfully")
-            print("-> Enter: service deamon start, to start deamon\n")
-            sys.exit(1)
+        import models
+        sqlquery("INSERT INTO settings (api_key) VALUES (?)", sys.argv[2])
+        os.mkdir("/var/www/deamon/data")
+        print("\n-> Node configured succesfully")
+        print("-> Enter: service deamon start, to start deamon\n")
+        sys.exit(1)
 except:
     pass
 
