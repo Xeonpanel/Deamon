@@ -102,18 +102,17 @@ def echo(ws):
     while True:
         data = json.loads(ws.receive())
         if data.get("uuid"):
-            try:
-                if client.containers.get(data.get("uuid")).status == "exited":
-                    container = client.containers.get(data.get("uuid"))
-                    for line in container.attach(stdout=True, stream=False, logs=True):
-                        ws.send(line.decode())
-                    ws.send("\nServer marked as offline..\n")
-                if client.containers.get(data.get("uuid")).status == "running":
-                    container = client.containers.get(data.get("uuid"))
-                    for line in container.attach(stdout=True, stream=True, logs=True):
-                        ws.send(line.decode())
-            except Exception:
+            # try:
+            if client.containers.get(data.get("uuid")).status == "exited":
+                container = client.containers.get(data.get("uuid"))
                 ws.send("Server marked as offline..\n")
+            if client.containers.get(data.get("uuid")).status == "running":
+                container = client.containers.get(data.get("uuid"))
+                # ws.send(container.stats())
+                for line in container.attach(stdout=True, stream=True, logs=True):
+                    ws.send(line.decode())
+            # except Exception:
+            #     ws.send("Server marked as offline..\n")
 
 try:
     if sys.argv[1] == "--token":
