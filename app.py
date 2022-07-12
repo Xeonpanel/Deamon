@@ -7,6 +7,8 @@ def sqlquery(sql, *parameter):
     conn.commit()
     return data
 
+os.chdir("/var/www/deamon")
+
 client = docker.from_env()
 app = flask.Flask(__name__)
 sock = flask_sock.Sock(app)
@@ -122,4 +124,9 @@ except:
 
 app.config["API_KEY"] = sqlquery("SELECT * FROM settings").fetchall()[0][0]
 app.config["SECRET_KEY"] = os.urandom(30).hex()
-waitress.serve(app, host="0.0.0.0", port=8080)
+if os.path.isfile("database.db"):
+    waitress.serve(app, host="0.0.0.0", port=8080)
+else:
+    print("\n-> Node not configured")
+    print("-> Go to you panel and click manage node to view deploy token\n")
+    exit()
