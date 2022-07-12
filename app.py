@@ -1,3 +1,4 @@
+from typing import Container
 import flask, flask_socketio, os, sqlite3, docker, sys, flask_sock, json, flask_cors
 
 def sqlquery(sql, *parameter):
@@ -11,6 +12,24 @@ client = docker.from_env()
 app = flask.Flask(__name__)
 sock = flask_sock.Sock(app)
 cors = flask_cors.CORS(app, resources={r"/*": {"origins": "*"}})
+
+@app.route("/api/servers/<uuid>/stop", methods=["POST"])
+def stop_server(uuid):
+    data = sqlquery("SELECT * FROM containers WHERE uuid = ? and owner_api = ?", uuid, flask.request.json["api_key"]).fetchall()
+    if len(data):
+        try:
+            container = client.containers.get(uuid)
+            container.stop()
+            container.remove(force=True)
+            response = flask.jsonify({"succes": "server stopped"})
+            response.headers["Access-Control-Allow-Origin"] = "*"
+            return response
+        except:
+            response = flask.jsonify({"error": "server already running"})
+            response.headers["Access-Control-Allow-Origin"] = "*"
+            return response
+    else:
+        flask.abort(401)
 
 @app.route("/api/servers/<uuid>/start", methods=["POST"])
 def start_server(uuid):
