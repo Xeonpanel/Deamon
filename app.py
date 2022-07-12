@@ -1,5 +1,4 @@
-from typing import Container
-import flask, flask_socketio, os, sqlite3, docker, sys, flask_sock, json, flask_cors
+import flask, os, sqlite3, docker, sys, flask_sock, json, flask_cors, waitress
 
 def sqlquery(sql, *parameter):
     conn = sqlite3.connect("database.db", check_same_thread=False)
@@ -42,7 +41,7 @@ def start_server(uuid):
                 container.remove(force=True)
                 mount = docker.types.Mount(
                     target="/home/container",
-                    source="/home/Deamon/data/{}".format(uuid),
+                    source="/var/www/deamon/data/{}".format(uuid),
                     type="bind"
                 )
                 container = client.containers.run(
@@ -64,7 +63,7 @@ def start_server(uuid):
         except:
             mount = docker.types.Mount(
                 target="/home/container",
-                source="/home/Deamon/data/{}".format(uuid),
+                source="/var/www/deamon/data/{}".format(uuid),
                 type="bind"
             )
             container = client.containers.run(
@@ -85,7 +84,7 @@ def start_server(uuid):
 @app.route("/api/servers/<uuid>/create", methods=["POST"])
 def create_server(uuid):
     if flask.request.form["api_key"] == app.config["API_KEY"]:
-        os.mkdir("/home/Deamon/data/{}".format(uuid))
+        os.mkdir("/var/www/deamon/data/{}".format(uuid))
         sqlquery("INSERT INTO containers (uuid, owner_api) VALUES (?, ?)", uuid, flask.request.form["owner_api"])
         return "server created"
     else:
@@ -123,4 +122,4 @@ except:
 
 app.config["API_KEY"] = sqlquery("SELECT * FROM settings").fetchall()[0][0]
 app.config["SECRET_KEY"] = os.urandom(30).hex()
-app.run(debug=True, host="45.140.189.16", port=80)
+waitress.serve(app, host="0.0.0.0", port=8080)
