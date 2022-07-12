@@ -119,6 +119,9 @@ try:
         if not os.path.isfile("database.db"):
             import models
             sqlquery("INSERT INTO settings (api_key) VALUES (?)", sys.argv[2])
+            print("\n-> Node configured succesfully")
+            print("-> Enter: service deamon start, to start deamon\n")
+            exit()
 except:
     pass
 
