@@ -11,7 +11,8 @@ then
     sudo git clone https://github.com/Xeonpanel/Deamon.git deamon
     sudo mv /var/www/deamon/deamon.service /etc/systemd/system/
     systemctl enable deamon --now
-    echo "\n\n Deamon succesfully installed, and started.. \n\n"
+    printf "\n-> Deamon succesfully installed"
+    printf "-> Go to you panel and click manage node to view deploy token\n"
 else
-    echo "Installation cancelled."
+    printf "-> Installation cancelled."
 fi
