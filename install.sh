@@ -7,10 +7,10 @@ then
     sudo apt update
     sudo apt install git python3 python3-pip docker containerd docker.io -y
     python3 -m pip install flask flask_sock flask_cors docker waitress
+    mkdir /var/www
     cd /var/www
     sudo git clone https://github.com/Xeonpanel/Deamon.git deamon
     sudo mv /var/www/deamon/deamon.service /etc/systemd/system/
-    systemctl enable deamon --now
     printf "\n-> Deamon succesfully installed"
     printf "-> Go to you panel and click manage node to view deploy token\n"
 else
