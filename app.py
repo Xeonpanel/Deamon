@@ -1,4 +1,4 @@
-import flask, os, sqlite3, docker, sys, flask_sock, json, flask_cors, logging, time, signal
+import cryptography, flask, os, sqlite3, docker, sys, flask_sock, json, flask_cors, logging, time, signal
 
 def sqlquery(sql, *parameter):
     conn = sqlite3.connect("database.db", check_same_thread=False)
@@ -205,7 +205,7 @@ except:
         app.config["SYSTEM_TOKEN"] = sqlquery("SELECT * FROM settings")[0][0]
         app.config["SECRET_KEY"] = os.urandom(30).hex()
         app.config["UPLOAD_FOLDER"] = "/etc/deamon/data"
-        app.run(debug=False, host="0.0.0.0", port=8080)
+        app.run(debug=False, host="0.0.0.0", ssl_context="adhoc", port=8080)
     else:
         print("\n-> Node not configured")
         os._exit(1)
