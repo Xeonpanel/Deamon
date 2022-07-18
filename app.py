@@ -1,3 +1,5 @@
+from operator import contains
+from typing import Container
 import flask, os, sqlite3, docker, sys, flask_sock, json, flask_cors, logging, time
 
 def sqlquery(sql, *parameter):
@@ -154,6 +156,20 @@ def stats(ws):
                         ws.send(line["memory_stats"]["usage"])
             except Exception:
                 pass
+
+@sock.route("/disk")
+def disk(ws):
+    while True:
+        data = json.loads(ws.receive())
+        if data.get("uuid"):
+            while True:
+                time.sleep(4)
+                container_size = 0
+                for path, dirs, files in os.walk("/etc/deamon/data/{}".format(data.get("uuid"))):
+                    for f in files:
+                        fp = os.path.join(path, f)
+                        container_size += os.path.getsize(fp)
+                ws.send(container_size)
 
 @sock.route("/status")
 def status(ws):
