@@ -142,7 +142,7 @@ def logs(ws):
             except Exception:
                 ws.send("Server marked as offline..\n")
 
-@sock.route("/stats")
+@sock.route("/memory")
 def stats(ws):
     while True:
         data = json.loads(ws.receive())
@@ -151,7 +151,7 @@ def stats(ws):
                 if client.containers.get(data.get("uuid")).status == "running":
                     container = client.containers.get(data.get("uuid"))
                     for line in container.stats(decode=True, stream=True):
-                        ws.send(line)
+                        ws.send(line["memory_stats"]["usage"])
             except Exception:
                 pass
 
