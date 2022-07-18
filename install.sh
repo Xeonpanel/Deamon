@@ -10,7 +10,7 @@ then
     cd /etc
     sudo git clone https://github.com/Xeonpanel/Deamon.git deamon
     sudo mv /etc/deamon/deamon.service /etc/systemd/system/
-    printf "-> Deamon succesfully installed."
+    printf "Installation -->  Completed\n"
 else
-    printf "-> Installation cancelled."
+    printf "Installation -->  Canceled\n"
 fi
