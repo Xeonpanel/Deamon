@@ -7,9 +7,9 @@ def sqlquery(sql, *parameter):
     conn.commit()
     return data
 
-context = OpenSSL.SSL.Context(OpenSSL.SSL.PROTOCOL_TLSv1_2)
-context.use_privatekey_file("")
-context.use_certificate_file("")
+# context = OpenSSL.SSL.Context(OpenSSL.SSL.PROTOCOL_TLSv1_2)
+# context.use_privatekey_file("")
+# context.use_certificate_file("")
 
 os.chdir("/etc/deamon")
 
@@ -209,7 +209,7 @@ except:
         app.config["SYSTEM_TOKEN"] = sqlquery("SELECT * FROM settings")[0][0]
         app.config["SECRET_KEY"] = os.urandom(30).hex()
         app.config["UPLOAD_FOLDER"] = "/etc/deamon/data"
-        app.run(debug=False, host="0.0.0.0", ssl_context=context, port=8080)
+        app.run(debug=False, host="0.0.0.0", ssl_context="adhoc", port=8080)
     else:
         print("\n-> Node not configured")
         os._exit(1)
