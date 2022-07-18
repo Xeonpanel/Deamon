@@ -163,13 +163,13 @@ def disk(ws):
         data = json.loads(ws.receive())
         if data.get("uuid"):
             while True:
-                time.sleep(4)
                 container_size = 0
                 for path, dirs, files in os.walk("/etc/deamon/data/{}".format(data.get("uuid"))):
                     for f in files:
                         fp = os.path.join(path, f)
                         container_size += os.path.getsize(fp)
                 ws.send(container_size)
+                time.sleep(4)
 
 @sock.route("/status")
 def status(ws):
