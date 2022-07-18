@@ -1,6 +1,4 @@
-from operator import contains
-from typing import Container
-import flask, os, sqlite3, docker, sys, flask_sock, json, flask_cors, logging, time
+import flask, os, sqlite3, docker, sys, flask_sock, json, flask_cors, logging, time, signal
 
 def sqlquery(sql, *parameter):
     conn = sqlite3.connect("database.db", check_same_thread=False)
@@ -116,7 +114,7 @@ def start_server(uuid):
 def create_server(uuid):
     if flask.request.form["system_token"] == app.config["SYSTEM_TOKEN"]:
         os.mkdir("/etc/deamon/data/{}".format(uuid))
-        sqlquery("INSERT INTO containers (uuid, user_token) VALUES (?, ?)", uuid, flask.request.form["user_token"])
+        sqlquery("INSERT INTO containers (uuid, user_token, port, memory) VALUES (?, ?)", uuid, flask.request.form.get("user_token"), flask.request.form.get("port"). flask.request.form.get("memory"))
         return "server created"
     else:
         flask.abort(401)
@@ -188,19 +186,23 @@ def status(ws):
 
 try:
     if sys.argv[1] == "--token":
-        import models
-        sqlquery("INSERT INTO settings (system_token) VALUES (?)", sys.argv[2])
-        os.mkdir("/etc/deamon/data")
+        conn = sqlite3.connect("database.db", check_same_thread=False)
+        cursor = conn.cursor()
+        cursor.executescript(open("schema.sql").read())
+        conn.commit()
+        if not os.path.exists("/etc/deamon/data"):
+            os.mkdir("/etc/deamon/data")
         print("\n-> Node configured succesfully")
         print("-> Enter: service deamon start, to start deamon\n")
-        sys.exit()
+        cursor.execute("INSERT INTO settings (system_token) VALUES (?)", (sys.argv[2],))
+        conn.commit()
+        os._exit(1)
 except:
     if os.path.isfile("database.db"):
         app.config["SYSTEM_TOKEN"] = sqlquery("SELECT * FROM settings")[0][0]
         app.config["SECRET_KEY"] = os.urandom(30).hex()
         app.config["UPLOAD_FOLDER"] = "/etc/deamon/data"
-        app.run(debug=True, host="0.0.0.0", port=8080)
+        app.run(debug=False, host="0.0.0.0", port=8080)
     else:
         print("\n-> Node not configured")
-        print("-> Go to you panel and click manage node to view deploy token\n")
-        sys.exit()
+        os._exit(1)
