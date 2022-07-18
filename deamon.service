@@ -1,9 +1,0 @@
-[Unit]
-Description=Deamon service
-After=multi-user.target
-[Service]
-Type=simple
-Restart=always
-ExecStart=/usr/bin/python3 /var/www/deamon/app.py
-[Install]
-WantedBy=multi-user.target
