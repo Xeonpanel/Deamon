@@ -151,7 +151,7 @@ def stats(ws):
                 if client.containers.get(data.get("uuid")).status == "running":
                     container = client.containers.get(data.get("uuid"))
                     for line in container.stats(decode=True, stream=True):
-                        ws.send({"status": line})
+                        ws.send(line)
             except Exception:
                 pass
 
