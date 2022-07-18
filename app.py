@@ -73,7 +73,7 @@ def start_server(uuid):
                 )
                 container = client.containers.run(
                     image=flask.request.json["image"],
-                    command=flask.request.json["startup_command"],
+                    command=["/bin/bash", flask.request.json["startup_command"]],
                     mounts=[mount],
                     name=uuid,
                     detach=True,
@@ -95,7 +95,7 @@ def start_server(uuid):
             )
             container = client.containers.run(
                 image=flask.request.json["image"],
-                command=flask.request.json["startup_command"],
+                command=["/bin/bash", flask.request.json["startup_command"]],
                 mounts=[mount],
                 name=uuid,
                 detach=True,
