@@ -60,7 +60,8 @@ def server_files(uuid):
 
 @app.route("/api/servers/<uuid>/start", methods=["POST"])
 def start_server(uuid):
-    if len(sqlquery("SELECT * FROM containers WHERE uuid = ? and user_token = ?", uuid, flask.request.json["user_token"])):
+    data = sqlquery("SELECT * FROM containers WHERE uuid = ? and user_token = ?", uuid, flask.request.json["user_token"])
+    if len(data):
         try:
             container = client.containers.get(uuid)
             if container.status == "exited":
@@ -76,6 +77,7 @@ def start_server(uuid):
                     command=["sh", "-c", flask.request.json["startup_command"]],
                     mounts=[mount],
                     name=uuid,
+                    port={data[0][3]:data[0][3]},
                     detach=True,
                     working_dir="/home/container",
                     stdout=True,
@@ -99,6 +101,7 @@ def start_server(uuid):
                 command=["sh", "-c", flask.request.json["startup_command"]],
                 mounts=[mount],
                 name=uuid,
+                port={data[0][3]:data[0][3]},
                 detach=True,
                 working_dir="/home/container",
                 stdout=True,
