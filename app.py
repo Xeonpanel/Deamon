@@ -114,7 +114,7 @@ def start_server(uuid):
 def create_server(uuid):
     if flask.request.form["system_token"] == app.config["SYSTEM_TOKEN"]:
         os.mkdir("/etc/deamon/data/{}".format(uuid))
-        sqlquery("INSERT INTO containers (uuid, user_token, port, memory) VALUES (?, ?)", uuid, flask.request.form.get("user_token"), flask.request.form.get("port"). flask.request.form.get("memory"))
+        sqlquery("INSERT INTO containers (uuid, user_token, port, memory) VALUES (?, ?, ?, ?)", uuid, flask.request.form.get("user_token"), flask.request.form.get("port"), flask.request.form.get("memory"))
         return "server created"
     else:
         flask.abort(401)
