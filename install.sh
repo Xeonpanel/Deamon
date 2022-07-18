@@ -6,7 +6,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]
 then
     sudo apt update
     sudo apt install git python3 python3-pip docker containerd docker.io -y
-    python3 -m pip install flask flask_sock flask_cors docker waitress cryptography
+    python3 -m pip install flask flask_sock flask_cors docker waitress cryptography pyOpenSSL
     cd /etc
     sudo git clone https://github.com/Xeonpanel/Deamon.git deamon
     sudo mv /etc/deamon/deamon.service /etc/systemd/system/
