@@ -18,7 +18,7 @@ then
     service nginx stop
     certbot certonly --standalone -d $domain
     cp /etc/deamon/deamon.conf /etc/nginx/sites-available/deamon.conf
-    sed -i "s/url/\n$domain\n/g" /etc/nginx/sites-available/deamon.conf
+    sed -i "s/url/$domain/" /etc/nginx/sites-available/deamon.conf
     ln -s /etc/nginx/sites-available/deamon.conf /etc/nginx/sites-enabled/deamon.conf
     systemctl restart nginx
     echo ""
