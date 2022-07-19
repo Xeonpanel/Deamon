@@ -1,4 +1,4 @@
-import flask, os, sqlite3, docker, sys, flask_sock, json, flask_cors, logging, time
+import flask, os, sqlite3, docker, sys, flask_sock, json, flask_cors, time
 
 def sqlquery(sql, *parameter):
     conn = sqlite3.connect("database.db", check_same_thread=False)
@@ -9,7 +9,6 @@ def sqlquery(sql, *parameter):
 
 os.chdir("/etc/deamon")
 
-logging.basicConfig(filename="logs/log.txt", level=logging.DEBUG)
 client = docker.from_env()
 app = flask.Flask(__name__)
 sock = flask_sock.Sock(app)
