@@ -39,7 +39,7 @@ def upload_file(uuid):
         if file.filename == "":
             return "something went wrong"
         if file:
-            file.save("{}/{}/{}".format(app.config["UPLOAD_FOLDER"], uuid, file.filename))
+            file.save("{}/{}/{}/{}".format(app.config["UPLOAD_FOLDER"], uuid, flask.request.form.get("path"), file.filename))
             return "file uploaded"
     else:
         flask.abort(401)
@@ -48,13 +48,24 @@ def upload_file(uuid):
 def server_files(uuid):
     if len(sqlquery("SELECT * FROM containers WHERE uuid = ? and user_token = ?", uuid, flask.request.form["user_token"])):
         directory = []
-        for file in os.listdir("/etc/deamon/data/{}/".format(uuid)):
-            if os.path.isdir("/etc/deamon/data/{}/{}".format(uuid, file)):
-                directory.append({"name": file, "type": "dir"})
+        for file in os.listdir("/etc/deamon/data/{}/{}".format(uuid, flask.request.form.get("path"))):
+            if os.path.isdir("/etc/deamon/data/{}/{}/{}".format(uuid, flask.request.form.get("path"), file)):
+                directory.append({"name": file, "type": "dir", "edit": False, "path": flask.request.form.get("path")})
             else:
-                directory.append({"name": file, "type": "file"})
+                directory.append({"name": file, "type": "file", "edit": True, "path": flask.request.form.get("path")})
         return flask.jsonify(directory)
-    else:
+    else: 
+        flask.abort(401)
+
+@app.route("/api/servers/<uuid>/files/edit", methods=["GET", "POST"])
+def file_content(uuid):
+    if len(sqlquery("SELECT * FROM containers WHERE uuid = ? and user_token = ?", uuid, flask.request.form["user_token"])):
+        if flask.request.method == "GET":
+            return open("/etc/deamon/data/{}/{}".format(uuid, flask.request.form.get("file")), "r").read()
+        else:
+            open("/etc/deamon/data/{}/{}".format(uuid, flask.request.form.get("file")), "w").write(flask.request.form.get("content"))
+            return "updated succesfully"
+    else: 
         flask.abort(401)
 
 @app.route("/api/servers/<uuid>/start", methods=["POST"])
@@ -204,7 +215,7 @@ except:
         app.config["SYSTEM_TOKEN"] = sqlquery("SELECT * FROM settings")[0][0]
         app.config["SECRET_KEY"] = os.urandom(30).hex()
         app.config["UPLOAD_FOLDER"] = "/etc/deamon/data"
-        app.run(debug=False, host="0.0.0.0", port=8080)
+        app.run(debug=False, host="0.0.0.0", port=5001)
     else:
         print("\n-> Node not configured")
         os._exit(1)
