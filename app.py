@@ -20,7 +20,7 @@ def stop_server(uuid):
     if len(data):
         try:
             container = client.containers.get(uuid)
-            container.stop()
+            container.kill()
             container.remove(force=True)
             response = flask.jsonify({"succes": "server stopped"})
             response.headers["Access-Control-Allow-Origin"] = "*"
