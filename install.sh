@@ -5,7 +5,7 @@ read -p "Are you sure you want to continue? [y/n] " -n 1 -r
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
     sudo apt update
-    sudo apt install git python3 python3-pip docker containerd docker.io -y
+    sudo apt --ignore-missing install git python3 python3-pip docker containerd docker.io
     python3 -m pip install flask flask_sock flask_cors docker waitress
     cd /etc
     sudo git clone https://github.com/Xeonpanel/Deamon.git deamon
