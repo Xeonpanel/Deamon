@@ -6,11 +6,26 @@ if [[ $REPLY =~ ^[Yy]$ ]]
 then
     sudo apt update
     sudo apt install git python3 python3-pip docker containerd docker.io -y
-    python3 -m pip install flask flask_sock flask_cors docker waitress cryptography pyOpenSSL
+    python3 -m pip install flask flask_sock flask_cors docker waitress
     cd /etc
     sudo git clone https://github.com/Xeonpanel/Deamon.git deamon
     sudo mv /etc/deamon/deamon.service /etc/systemd/system/
-    printf "-> Deamon succesfully installed."
+    echo "Installing nginx config..."
+	clear
+    read -p 'Enter your domain ( No IP ): '  domain
+    echo "Enter the domain name you want to use: "
+    read domain
+    service nginx stop
+    certbot certonly --standalone -d $domain
+    cp /etc/deamon/deamon.conf /etc/nginx/sites-available/deamon.conf
+    sed -i "s/url/\n$domain\n/g" /etc/nginx/sites-available/deamon.conf
+    ln -s /etc/nginx/sites-available/deamon.conf /etc/nginx/sites-enabled/deamon.conf
+    systemctl restart nginx
+    echo ""
+    echo " --> Installation completed"
+    echo ""
 else
-    printf "-> Installation cancelled."
+    echo ""
+    echo " --> Installation cancelled"
+    echo ""
 fi
