@@ -1,8 +1,16 @@
-# Verify that user wants to install
-echo "This script will install the following packages:"
-# Are you sure you want to continue? [y/n]
-read -p "Are you sure you want to continue? [y/n] " -n 1 -r
-if [[ $REPLY =~ ^[Yy]$ ]]
+#!/bin/bash
+clear
+echo "XeonPanel Deamon v0.8 Installation Script"
+echo "Copyright © 2022 Xeonpanel."
+echo "For support join our community: https://discord.gg/4y9X28Ubxd"
+sleep 1s
+echo ""
+if [ "$(id -u)" != "0" ]; then
+    printf "This script must be run as root\nYou can login as root with\033[0;32m sudo su -\033[0m\n" 1>&2
+    exit 1
+fi
+read -p "Are you sure you want to continue? [y/n] " installation
+if [[ $installation == "y" || $installation == "Y" || $installation == "yes" || $installation == "Yes" ]]
 then
     sudo apt update
     sudo apt --ignore-missing install git python3 python3-pip docker containerd docker.io
@@ -13,8 +21,6 @@ then
     echo "Installing nginx config..."
 	clear
     read -p 'Enter your domain ( No IP ): '  domain
-    echo "Enter the domain name you want to use: "
-    read domain
     service nginx stop
     certbot certonly --standalone -d $domain
     cp /etc/deamon/deamon.conf /etc/nginx/sites-available/deamon.conf
