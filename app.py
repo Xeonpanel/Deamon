@@ -68,6 +68,21 @@ def file_content(uuid):
     else: 
         flask.abort(401)
 
+@app.route("/api/servers/<uuid>/files/create", methods=["POST"])
+def create_file(uuid):
+    if len(sqlquery("SELECT * FROM containers WHERE uuid = ? and user_token = ?", uuid, flask.request.form["user_token"])):
+        if flask.request.form.get("type") == "file":
+            open("/etc/deamon/data/{}/{}/{}".format(uuid, flask.request.form.get("path"), flask.request.form.get("file_name")), "w")
+            return "created succesfully"
+        else:
+            try:
+                os.mkdir("/etc/deamon/data/{}/{}/{}".format(uuid, flask.request.form.get("path"), flask.request.form.get("dir_name")))
+            except:
+                os.makedirs("/etc/deamon/data/{}/{}/{}".format(uuid, flask.request.form.get("path"), flask.request.form.get("dir_name")))
+            return "created succesfully"
+    else: 
+        flask.abort(401)
+
 @app.route("/api/servers/<uuid>/start", methods=["POST"])
 def start_server(uuid):
     data = sqlquery("SELECT * FROM containers WHERE uuid = ? and user_token = ?", uuid, flask.request.json["user_token"])
