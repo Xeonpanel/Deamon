@@ -44,7 +44,7 @@ def upload_file(uuid):
     else:
         flask.abort(401)
 
-@app.route("/api/servers/<uuid>/files", methods=["GET"])
+@app.route("/api/servers/<uuid>/files", methods=["POST"])
 def server_files(uuid):
     if len(sqlquery("SELECT * FROM containers WHERE uuid = ? and user_token = ?", uuid, flask.request.form["user_token"])):
         directory = []
