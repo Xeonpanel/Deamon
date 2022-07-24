@@ -101,6 +101,7 @@ def start_server(uuid):
                     image=flask.request.json["image"],
                     command=["sh", "-c", flask.request.json["startup_command"]],
                     mounts=[mount],
+                    environment=["TERM=xterm-256color"],
                     name=uuid,
                     ports={data[0][3]:data[0][3]},
                     detach=True,
@@ -125,6 +126,7 @@ def start_server(uuid):
                 image=flask.request.json["image"],
                 command=["sh", "-c", flask.request.json["startup_command"]],
                 mounts=[mount],
+                environment=["TERM=xterm-256color"],
                 name=uuid,
                 ports={data[0][3]:data[0][3]},
                 detach=True,
@@ -203,7 +205,7 @@ def status(ws):
         data = json.loads(ws.receive())
         if data.get("uuid"):
             while True:
-                time.sleep(0.5)
+                time.sleep(0.1)
                 try:
                     if client.containers.get(data.get("uuid")).status == "exited":
                         ws.send("offline")
